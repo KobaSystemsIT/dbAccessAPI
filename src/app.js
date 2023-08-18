@@ -6,8 +6,17 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-app.enable('trust proxy');
+// Configuración de CORS con encabezados permitidos y origen permitido
+const corsOptions = {
+    origin: 'http://dbaccessapi.blackgymfitclub.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
+// Configuración de CORS en la aplicación
+app.use(cors(corsOptions));
+
+// Middleware para confiar en el encabezado X-Forwarded-Host
 app.use((req, res, next) => {
     if (req.headers['x-forwarded-host']) {
         req.headers.host = req.headers['x-forwarded-host'];
