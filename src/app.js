@@ -16,7 +16,9 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
+app.get('/', (req, res)=>{
+	res.send('Bienvenido a dbaccessapi');
+});
 app.use('/api', authRoutes);
 app.use('/api/dbaccess/', dbaccessapi);
 
