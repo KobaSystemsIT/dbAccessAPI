@@ -5,7 +5,7 @@ const saltRounds = 10; // Número de rondas de encriptación
 async function getUserByUsername(username) {
     const [rows] = await db.query('CALL getDataUserAdmin(?)', [username]);
     if (rows.length === 0) {
-      return null; // Usuario no encontrado
+      return null; //
     }
     return rows[0];
   }
