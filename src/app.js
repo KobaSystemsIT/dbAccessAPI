@@ -8,7 +8,6 @@ app.use(cors());
 
 // Configuración de CORS con encabezados permitidos y origen permitido
 const corsOptions = {
-    origin: 'http://dbaccessapi.blackgymfitclub.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };

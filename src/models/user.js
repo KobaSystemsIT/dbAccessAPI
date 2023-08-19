@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de encriptación
 
 async function getUserByUsername(username) {
-    const [rows] = await db.query('SELECT * FROM adminUser WHERE username = ?', [username]);
+    const [rows] = await db.query('CALL getDataUserAdmin(?)', [username]);
     if (rows.length === 0) {
       return null; // Usuario no encontrado
     }
