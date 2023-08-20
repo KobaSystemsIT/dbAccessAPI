@@ -11,7 +11,7 @@ async function getUserByUsername(username) {
   }
   
 
-async function registerUser(username, password) {
+async function registerUser(username, password, idTypeUser) {
     try{
         async function hashPassword(password) {
             const salt = await bcrypt.genSalt(saltRounds);
@@ -23,7 +23,7 @@ async function registerUser(username, password) {
         
           const hashedPassword = await hashPassword(plainPassword);
         
-          const [rows] = await db.query('CALL addAdminUser(?, ?)', [username, hashedPassword]);
+          const [rows] = await db.query('CALL addUser(?, ?, ?)', [username, hashedPassword, idTypeUser]);
           return rows;
     } catch (error) {
         console.error('Mysql: ', error);
