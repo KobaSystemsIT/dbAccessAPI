@@ -27,8 +27,8 @@ router.post('/login', async (req, res) => {
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) return res.status(401).send('Invalid password');
       const secretKey = process.env.JWT_SECRET;
-      const token = jwt.sign({ id: user.adminID, userType: user.username, idClub:idClub}, secretKey);
-      res.json({ idUser: user.adminID, username: user.username, userType: user.nameUserType, token: token  });
+      const token = jwt.sign({ id: user.adminID, userType: user.rol, idClub:idClub}, secretKey);
+      res.json({ idUser: user.adminID, username: user.username, rol: user.rol, idClub:idClub, token: token });
     } catch (error) {
       console.error(error);
       res.status(500).send('Server error');
