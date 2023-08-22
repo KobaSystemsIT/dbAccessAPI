@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de encriptación
 
