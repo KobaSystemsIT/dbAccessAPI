@@ -40,7 +40,6 @@ router.post('/login', async (req, res) => {
 router.get('/getClubes', async (req, res) => {
   try {
     const data = await getClubes();
-    console.log(data);
     if (!data) return res.status(404).send('Ocurrió un error.');
     res.json({ data });
   } catch (error) {
