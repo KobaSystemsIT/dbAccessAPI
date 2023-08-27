@@ -25,9 +25,9 @@ router.post('/login', async (req, res) => {
 
   try {
     const [user] = await getUserByUsername(username);
-    if (!user) return res.status(404).send('User not found');
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).send('Invalid password');
+    if (!validPassword) return res.status(401).json({ error: 'Contraseña incorrecta' });
     const secretKey = process.env.JWT_SECRET;
     const token = jwt.sign({ id: user.adminID, userType: user.rol, idClub: idClub }, secretKey);
     res.json({ idUser: user.adminID, username: user.username, rol: user.rol, idClub: idClub, token: token });

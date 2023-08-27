@@ -8,6 +8,11 @@ async function getClubes(){
     return rows;
 }
 
+async function registerClub(){
+
+}
+
 module.exports = {
-    getClubes
+    getClubes,
+    registerClub
 }
