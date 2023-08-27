@@ -25,17 +25,24 @@ router.post('/login', async (req, res) => {
 
   try {
     const [user] = await getUserByUsername(username);
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!user) {
+      return res.status(404).json({ error: 'UserNotFound', message: 'Usuario no encontrado' });
+    }
+    
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).json({ error: 'Contraseña incorrecta' });
+    if (!validPassword) {
+      return res.status(401).json({ error: 'InvalidPassword', message: 'Contraseña incorrecta' });
+    }
+
     const secretKey = process.env.JWT_SECRET;
     const token = jwt.sign({ id: user.adminID, userType: user.rol, idClub: idClub }, secretKey);
     res.json({ idUser: user.adminID, username: user.username, rol: user.rol, idClub: idClub, token: token });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error');
+    res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
 });
+
 
 router.get('/getClubes', async (req, res) => {
   try {
