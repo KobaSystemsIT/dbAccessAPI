@@ -1,6 +1,7 @@
 const express = require('express');
 const authRoutes = require('./routes/auth');
 const dbaccessapi = require('./routes/dbaccessapi');
+const fingerprintapi = require('./routes/fingerprintapi')
 const cors = require('cors');
 
 const app = express();
@@ -29,5 +30,6 @@ app.get('/', (req, res)=>{
 });
 app.use('/api', authRoutes);
 app.use('/api/dbaccess/', dbaccessapi);
+app.use('api/fingerprint/', fingerprintapi);
 
 module.exports = app;
