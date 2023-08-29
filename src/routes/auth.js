@@ -7,19 +7,6 @@ require('dotenv').config();
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
-  const { username, password, idUserType } = req.body;
-
-  try {
-    const user = await registerUser(username, password, idUserType);
-    if (!user) return res.status(200).send('Usuario registrado con éxito.');
-    res.json({ mensaje: 'Usuario registrado' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server error');
-  }
-})
-
 router.post('/login', async (req, res) => {
   const { username, password, idClub } = req.body;
 
@@ -51,7 +38,7 @@ router.get('/getClubes', async (req, res) => {
     res.json({ data });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error error')
+    res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
 })
 

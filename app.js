@@ -1,7 +1,7 @@
 const express = require('express');
-const authRoutes = require('./routes/auth');
-const dbaccessapi = require('./routes/dbaccessapi');
-const fingerprintapi = require('./routes/fingerprintapi')
+const authRoutes = require('./src/routes/auth');
+const dbaccessapi = require('./src/routes/dbaccessapi');
+const fingerprintapi = require('./src/routes/fingerprintapi')
 const cors = require('cors');
 
 const app = express();
