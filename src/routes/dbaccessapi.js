@@ -1,12 +1,9 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
+const { viewClientsData } = require('../models/clients/clients');
 
 const router = express.Router();
-
-router.get('/protected', authenticateToken, (req, res) => {
-    res.json({ message: 'Bienvenido a la ruta protegida', user: req.user});
-})
 
 router.post('/getInventory', authenticateToken, async (req, res) =>{
     const { idClub }  = req.body;
@@ -18,7 +15,7 @@ router.post('/getInventory', authenticateToken, async (req, res) =>{
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 router.delete('/deleteProductInventory', authenticateToken, async(req, res) => { 
     const { inventoryID, idClub } = req.body;
@@ -30,7 +27,7 @@ router.delete('/deleteProductInventory', authenticateToken, async(req, res) => {
         console.error(error)
         res.status(500).json( {error: 'ServerError', message: 'Error en el servidor'});
     }
-})
+});
 
 router.post('/addOrUpdateInventory', authenticateToken, async(req, res) => {
     const { cantProductos, productID, idClub, fecha } = req.body;
@@ -41,6 +38,18 @@ router.post('/addOrUpdateInventory', authenticateToken, async(req, res) => {
     } catch (error){
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor'});
+    }
+});
+
+router.post('/viewClientsData', authenticateToken, async(req, res) => {
+    const { idClub } = req.body;
+    try{
+        const data = await viewClientsData(idClub);
+        if(!data) return res.status(404).send('Error al obtener los datos');
+        res.json({data});
+    } catch (error){
+        console.error(error);
+        res.status(500).json( { error: 'ServerError', message: 'Error en el servidor'});
     }
 })
 
