@@ -3,9 +3,6 @@ const db = require('../../config/db');
 async function viewClientsData(idClub){
     try{
         const [rows] = await db.query('CALL viewClientsData(?)', [idClub]);
-        if (rows.length === 0) {
-            return null;
-        }
         return rows[0];
     } catch (error){
         console.error('Mysql: ', error);
@@ -13,6 +10,17 @@ async function viewClientsData(idClub){
     }
 }
 
+async function viewStaffData(idClub){
+    try{
+        const [rows] = await db.query('CALL viewStaffData(?)', [idClub]);
+        return rows[0];
+    } catch (error){
+        console.error(error);
+        throw error;
+    }
+}
+
 module.exports = {
-    viewClientsData
+    viewClientsData,
+    viewStaffData
 }
