@@ -45,7 +45,7 @@ router.post('/viewClientsData', authenticateToken, async (req, res) => {
     const { idClub } = req.body;
 
     try {
-        const data = await viewClientsData(idClub); // Asumo que esta función obtiene los datos
+        const data = await viewClientsData(idClub);
         if (!data) {
             return res.status(404).json({ error: 'No se encontraron datos' });
         }
