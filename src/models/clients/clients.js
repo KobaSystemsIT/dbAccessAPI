@@ -6,7 +6,7 @@ async function viewClientsData(idClub){
         if (rows.length === 0) {
             return null;
         }
-        return rows;
+        return rows[0];
     } catch (error){
         console.error('Mysql: ', error);
         throw error;

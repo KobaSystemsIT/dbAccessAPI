@@ -41,16 +41,19 @@ router.post('/addOrUpdateInventory', authenticateToken, async(req, res) => {
     }
 });
 
-router.post('/viewClientsData', authenticateToken, async(req, res) => {
+router.post('/viewClientsData', authenticateToken, async (req, res) => {
     const { idClub } = req.body;
-    try{
-        const data = await viewClientsData(idClub);
-        if(!data) return res.status(404).send('Error al obtener los datos');
-        res.json({data});
-    } catch (error){
+
+    try {
+        const data = await viewClientsData(idClub); // Asumo que esta función obtiene los datos
+        if (!data) {
+            return res.status(404).json({ error: 'No se encontraron datos' });
+        }
+        res.json({ data });
+    } catch (error) {
         console.error(error);
-        res.status(500).json( { error: 'ServerError', message: 'Error en el servidor'});
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 module.exports = router;
