@@ -1,26 +1,50 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
-const db = require('../config/db');
+const { registerFingerData, getFingerData, logIngOutRegister } = require('../models/fingerprint/fingerprint');
 
 const router = express.Router();
+
 router.post('/registerUserBiometric', authenticateToken, async (req, res) => {
-    const { idUser, biometricData } = req.body;
-    
+    const { idUser, biometricData, fecha } = req.body;
+
     try {
-        const query = 'INSERT INTO biometricDataUser (iduser, biometricData, created_at) VALUES (?, ?, NOW())';
-        const [result] = await db.query(query, [idUser, biometricData]);
-        
-        if (result.affectedRows === 1) {
-            res.json({ message: 'Usuario registrado con huella digital exitosamente' });
-        } else {
-            res.status(500).json({ error: 'ServerError', message: 'Error al registrar la huella digital' });
-        }
+        const data = await registerFingerData(idUser, biometricData, fecha);
+        if (!data) return res.status(404).send('Ocurrió un error al registrar los datos.');
+        res.json({ data });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
 
+router.get('/getFingerData', authenticateToken, async (req, res) => {
+    try {
+        const data = await getFingerData();
+        if (!data) return res.status(404).send('Ocurrió un error al devolver los datos.');
+        res.json({ data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
+
+router.post('/logInOutAccess', authenticateToken, async (req, res) => {
+    const { idUser, idClub } = req.body;
+
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'America/Merida' }));
+
+    const horaIngresoSalida = formattedDate.toISOString().slice(0, 19).replace('T', ' ');
+    try {
+        const [data] = await logIngOutRegister(idUser, idClub, horaIngresoSalida, horaIngresoSalida)
+        if (!data) return res.status(404).send('Ocurrió un error al iniciar sesión');
+        res.json({ data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
 // Otro endpoint que puedas necesitar en el futuro
 
 module.exports = router;
