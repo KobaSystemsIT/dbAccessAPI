@@ -1,7 +1,7 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
-const { viewClientsData, viewStaffData } = require('../models/clients/clients');
+const { viewClientsData, viewStaffData  } = require('../models/clients/clients');
 
 const router = express.Router();
 
@@ -70,7 +70,5 @@ router.post('/viewStaffData', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
-
-
 
 module.exports = router;

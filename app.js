@@ -30,6 +30,6 @@ app.get('/', (req, res)=>{
 });
 app.use('/api', authRoutes);
 app.use('/api/dbaccess/', dbaccessapi);
-app.use('api/fingerprint/', fingerprintapi);
+app.use('/api/fingerprint/', fingerprintapi);
 
 module.exports = app;
