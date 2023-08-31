@@ -1,20 +1,17 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
-const db = require('../config/db');
+const { registerFingerData } = require('../models/fingerprint/fingerprint');
 
 const router = express.Router();
+
 router.post('/registerUserBiometric', authenticateToken, async (req, res) => {
-    const { idUser, biometricData } = req.body;
+    const { idUser, biometricData, fecha } = req.body;
     
     try {
-        const query = 'INSERT INTO biometricDataUser (iduser, biometricData, created_at) VALUES (?, ?, NOW())';
-        const [result] = await db.query(query, [idUser, biometricData]);
-        
-        if (result.affectedRows === 1) {
-            res.json({ message: 'Usuario registrado con huella digital exitosamente' });
-        } else {
-            res.status(500).json({ error: 'ServerError', message: 'Error al registrar la huella digital' });
-        }
+        const data = await registerFingerData(idUser, biometricData, fecha);
+        if(!data) return res.status(404).send('Ocurrió un error.');
+        res.json({data});
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
