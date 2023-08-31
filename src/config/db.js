@@ -3,10 +3,10 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const dataSQL = mysql.createPool({
-    host: '74.208.63.34',
-    user: 'admin',
-    password: 'kObaSys2023',
-    database: 'blackgymsys'
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.NAME
 });
 
 module.exports = dataSQL;
