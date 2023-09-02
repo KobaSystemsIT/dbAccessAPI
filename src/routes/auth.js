@@ -2,14 +2,13 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
-const { getUserByUsername, registerUser } = require('../models/users/user');
+const { getUserByUsername } = require('../models/users/user');
 require('dotenv').config();
 
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
   const { username, password, idClub } = req.body;
-  console.log(username)
   try {
     const [user] = await getUserByUsername(username);
     if (!user) {

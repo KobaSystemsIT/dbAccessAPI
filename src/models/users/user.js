@@ -31,7 +31,7 @@ async function registerUser(username, password, idTypeUser) {
   }
 }
 
-async function getUserByUsername(username) {
+async function getUserbyName(username) {
   const name = `%${username}%`; 
   const [rows] = await db.query('SELECT idUser, username FROM users WHERE username LIKE ?', [name]);
   return rows;
@@ -39,5 +39,5 @@ async function getUserByUsername(username) {
 module.exports = {
   getUserByUsername,
   registerUser,
-  getUserByUsername
+  getUserbyName
 }
