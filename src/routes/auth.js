@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/login', async (req, res) => {
   const { username, password, idClub } = req.body;
-
+  console.log(username)
   try {
     const [user] = await getUserByUsername(username);
     if (!user) {

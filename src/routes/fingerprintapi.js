@@ -1,6 +1,7 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { registerFingerData, getFingerData, logIngOutRegister } = require('../models/fingerprint/fingerprint');
+const { getUserbyName } = require('../models/users/user');
 
 const router = express.Router();
 
@@ -43,6 +44,19 @@ router.post('/logInOutAccess', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
+
+router.post('/getUserbyName', authenticateToken, async (req, res) => {
+    const { username } = req.body;
+
+    try{
+        const [data] = await getUserbyName(username);
+        if(!data) return res.status(404).send('Ocurrió un error al obtener los datos');
+        res.json({data});
+    } catch ( error ){
+        console.error(error);
+        res.status(500).json({error: 'ServerError', message: 'Error en el servidor'});
     }
 })
 // Otro endpoint que puedas necesitar en el futuro
