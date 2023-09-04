@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/getClubes', authenticateToken, async (req, res) => {
+router.get('/getClubes', async (req, res) => {
   try {
     const data = await getClubes();
     if (!data) return res.status(404).send('Ocurrió un error.');
