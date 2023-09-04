@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
 const { getUserByUsername } = require('../models/users/user');
+const authenticateToken = require('../middleware/authMiddleware');
 require('dotenv').config();
 
 const router = express.Router();
@@ -30,7 +31,7 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/getClubes', async (req, res) => {
+router.get('/getClubes', authenticateToken, async (req, res) => {
   try {
     const data = await getClubes();
     if (!data) return res.status(404).send('Ocurrió un error.');

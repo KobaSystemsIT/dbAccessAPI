@@ -41,7 +41,7 @@ router.post('/addOrUpdateInventory', authenticateToken, async(req, res) => {
     }
 });
 
-router.post('/viewClientsData', authenticateToken, async (req, res) => {
+router.post('/viewClientsData', async (req, res) => {
     const { idClub } = req.body;
 
     try {
