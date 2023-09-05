@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
+const { getPlanes } = require('../models/planes/plan');
 const { getUserByUsername } = require('../models/users/user');
 const authenticateToken = require('../middleware/authMiddleware');
 require('dotenv').config();
@@ -31,9 +32,20 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/getClubes', authenticateToken, async (req, res) => {
+router.get('/getClubes', async (req, res) => {
   try {
     const data = await getClubes();
+    if (!data) return res.status(404).send('Ocurrió un error.');
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+  }
+})
+
+router.get('/getPlanes', async (req, res) => {
+  try {
+    const data = await getPlanes();
     if (!data) return res.status(404).send('Ocurrió un error.');
     res.json({ data });
   } catch (error) {
