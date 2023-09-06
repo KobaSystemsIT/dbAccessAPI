@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
 const { getPlanes } = require('../models/planes/plan');
-const { getUserByUsername } = require('../models/users/user');
+const { getUserByUsername, changePassword } = require('../models/users/user');
 const authenticateToken = require('../middleware/authMiddleware');
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'UserNotFound', message: 'Usuario no encontrado' });
     }
-    
+
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ error: 'InvalidPassword', message: 'Contraseña incorrecta' });
@@ -31,7 +31,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
 router.get('/getClubes', async (req, res) => {
   try {
     const data = await getClubes();
@@ -41,17 +40,23 @@ router.get('/getClubes', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
-})
+});
 
 router.get('/getPlanes', async (req, res) => {
   try {
     const data = await getPlanes();
+
+router.put('/changePassword', async (req, res) => {
+  const { username, newPassword } = req.body;
+
+  try {
+    const [data] = await changePassword(username, newPassword);
     if (!data) return res.status(404).send('Ocurrió un error.');
     res.json({ data });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
-})
+});
 
 module.exports = router;
