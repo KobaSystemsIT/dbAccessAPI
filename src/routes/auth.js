@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
+const { getPlanes } = require('../models/planes/plan');
 const { getUserByUsername, changePassword } = require('../models/users/user');
 const authenticateToken = require('../middleware/authMiddleware');
 require('dotenv').config();
@@ -39,7 +40,11 @@ router.get('/getClubes', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
-})
+});
+
+router.get('/getPlanes', async (req, res) => {
+  try {
+    const data = await getPlanes();
 
 router.put('/changePassword', async (req, res) => {
   const { username, newPassword } = req.body;
@@ -52,6 +57,6 @@ router.put('/changePassword', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
   }
-})
+});
 
 module.exports = router;
