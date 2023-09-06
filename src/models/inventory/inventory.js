@@ -2,7 +2,8 @@ const db = require('../../config/db');
 
 async function getInventory(idClub) {
     try {
-        const [rows] = await db.query('SELECT * FROM inventory where idClub = ?', [idClub]);
+        const [rows] = await db.query('SELECT A.inventoryID , B.productName, A.currentStock, A.dateReorder FROM inventory A ' +
+        'LEFT JOIN products B on A.productID = B.productID WHERE A.idClub = ?', [idClub]);
         return rows;
     } catch (error) {
         console.error('Mysql: ', error);
