@@ -45,6 +45,13 @@ router.get('/getClubes', async (req, res) => {
 router.get('/getPlanes', async (req, res) => {
   try {
     const data = await getPlanes();
+    if (!data) return res.status(404).send('Ocurrió un error.');
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+  }
+});
 
 router.put('/changePassword', async (req, res) => {
   const { username, newPassword } = req.body;
