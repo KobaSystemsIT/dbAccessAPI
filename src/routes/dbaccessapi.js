@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/getInventory', authenticateToken, async (req, res) =>{
     const { idClub }  = req.body;
     try{
-        const inventory = await getInventory(idClub);
+        const [inventory] = await getInventory(idClub);
         if(!inventory) return res.status(404).send('No hay registros');
         res.json({inventory});
     } catch (error){
