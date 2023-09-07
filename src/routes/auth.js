@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
 const { getPlanes } = require('../models/planes/plan');
 const { getUserByUsername, changePassword } = require('../models/users/user');
-const authenticateToken = require('../middleware/authMiddleware');
+
 require('dotenv').config();
 
 const router = express.Router();
@@ -54,12 +54,13 @@ router.get('/getPlanes', async (req, res) => {
 });
 
 router.put('/changePassword', async (req, res) => {
-  const { username, newPassword } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const [data] = await changePassword(username, newPassword);
+    const data = await changePassword(username, password);
+    console.log(data)
     if (!data) return res.status(404).send('Ocurrió un error.');
-    res.json({ data });
+    res.json({ message: 'Contraseña actualizada con éxito.'  });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });

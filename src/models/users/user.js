@@ -31,17 +31,23 @@ async function hashPassword(password) {
 }
 
 async function getUserbyName(username) {
-  const name = `%${username}%`; 
+  const name = `%${username}%`;
   const [rows] = await db.query('SELECT idUser, username FROM users WHERE username LIKE ?', [name]);
   return rows;
 }
 
-async function changePassword(username, newPassword) {
+async function changePassword(username, password) {
   try {
-    const plainPassword = newPassword;
+    const plainPassword = password;
+    console.log(plainPassword)
     const hashedPassword = await hashPassword(plainPassword);
+    console.log(hashedPassword)
     const [rows] = await db.query('UPDATE adminUser set password = ? WHERE username = ?', [hashedPassword, username]);
-    return rows[0];
+    if (rows.affectedRows === 1) {
+      return true;
+    } else {
+      return false;
+    }
   } catch (error) {
     console.log('Mysql: ', error);
     throw error;
@@ -51,6 +57,6 @@ async function changePassword(username, newPassword) {
 module.exports = {
   getUserByUsername,
   registerUser,
-  getUserbyName, 
+  getUserbyName,
   changePassword
 }
