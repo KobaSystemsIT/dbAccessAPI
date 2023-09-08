@@ -32,11 +32,23 @@ router.get('/getFingerData', authenticateToken, async (req, res) => {
 
 router.post('/logInOutAccess', authenticateToken, async (req, res) => {
     const { idUser, idClub } = req.body;
+    const timeZone = 'America/Mexico_City';
+
+    const options = {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Formato de 24 horas
+    };
 
     const currentDate = new Date();
-    const formattedDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'America/Merida' }));
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
 
-    const horaIngresoSalida = formattedDate.toISOString().slice(0, 19).replace('T', ' ');
+    const horaIngresoSalida = formattedDate;
     try {
         const [data] = await logIngOutRegister(idUser, idClub, horaIngresoSalida, horaIngresoSalida)
         if (!data) return res.status(404).send('Ocurrió un error al iniciar sesión');
@@ -50,13 +62,13 @@ router.post('/logInOutAccess', authenticateToken, async (req, res) => {
 router.post('/getUserbyName', authenticateToken, async (req, res) => {
     const { username } = req.body;
 
-    try{
-        const [data] = await getUserbyName(username);
-        if(!data) return res.status(404).send('Ocurrió un error al obtener los datos');
-        res.json({data});
-    } catch ( error ){
+    try {
+        const data = await getUserbyName(username);
+        if (!data) return res.status(404).send('Ocurrió un error al obtener los datos');
+        res.json({ data });
+    } catch (error) {
         console.error(error);
-        res.status(500).json({error: 'ServerError', message: 'Error en el servidor'});
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 })
 // Otro endpoint que puedas necesitar en el futuro
