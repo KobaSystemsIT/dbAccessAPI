@@ -3,6 +3,7 @@ const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
 const { viewClientsData, viewStaffData  } = require('../models/clients/clients');
 const { getClubesData } = require('../models/clubes/club');
+const { newUserOrStaff } = require('../models/users/user');
 
 const router = express.Router();
 
@@ -82,5 +83,18 @@ router.get('/getClubesData', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
+
+router.post('/newUserOrStaff', authenticateToken, async (req, res) => {
+    const { username, lastname, phone, email, nameEmergency, phoneEmergency, idUserType, idClub, fecha} = req.body;
+
+    try{
+        const [response] = await newUserOrStaff(username, lastname, phone, email, nameEmergency, phoneEmergency, idUserType, idClub, fecha);
+        if(!response) res.status(404).send('Error al registrar al usuario');
+        return res.json( response );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+}) 
 
 module.exports = router;
