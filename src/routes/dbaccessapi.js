@@ -2,6 +2,7 @@ const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
 const { viewClientsData, viewStaffData  } = require('../models/clients/clients');
+const { getClubesData } = require('../models/clubes/club');
 
 const router = express.Router();
 
@@ -66,6 +67,17 @@ router.post('/viewStaffData', authenticateToken, async (req, res) => {
         }
         res.json({ data });
     } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
+
+router.get('/getClubesData', authenticateToken, async (req, res) => {
+    try {
+        const data = await getClubesData();
+        if(!data) return res.json({ error: 'No se encontraron datos.'}) 
+        return res.json({ data });
+    } catch (error){
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }

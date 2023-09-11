@@ -12,7 +12,13 @@ async function registerClub(){
 
 }
 
+async function getClubesData() {
+    const [rows] = await db.query('SELECT * FROM getClubesData');
+    return rows;
+}
+
 module.exports = {
     getClubes,
-    registerClub
+    registerClub,
+    getClubesData
 }
