@@ -1,7 +1,7 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
-const { viewClientsData, viewStaffData  } = require('../models/clients/clients');
+const { viewClientsData, viewStaffData, viewClientsSubs  } = require('../models/clients/clients');
 const { getClubesData } = require('../models/clubes/club');
 const { newUserOrStaff } = require('../models/users/user');
 
@@ -48,6 +48,21 @@ router.post('/viewClientsData', authenticateToken, async (req, res) => {
 
     try {
         const data = await viewClientsData(idClub);
+        if (!data) {
+            return res.status(404).json({ error: 'No se encontraron datos' });
+        }
+        res.json({ data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
+
+router.post('/viewClientsSubs', authenticateToken, async(req, res) => {
+    const { idClub } = req.body;
+
+    try {
+        const data = await viewClientsSubs(idClub);
         if (!data) {
             return res.status(404).json({ error: 'No se encontraron datos' });
         }

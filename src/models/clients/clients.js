@@ -20,7 +20,18 @@ async function viewStaffData(idClub){
     }
 }
 
+async function viewClientsSubs(idClub){
+    try{
+        const [rows] = await db.query('CALL viewClientsSubs(?)', [idClub]);
+        return rows[0];
+    } catch (error){
+        console.error(error);
+        throw error;
+    }
+}
+
 module.exports = {
     viewClientsData,
-    viewStaffData
+    viewStaffData,
+    viewClientsSubs
 }
