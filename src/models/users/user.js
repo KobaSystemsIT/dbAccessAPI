@@ -65,10 +65,22 @@ async function newUserOrStaff(username, lastname, phone, email, nameEmergency, p
   }
 
 }
+
+async function modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption){
+  try {
+    const [rows] = await db.query('CALL modifyOrDeleteUser(?, ?, ?, ?, ?, ?, ?, ?)', [idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption]);
+    return rows[0];
+  } catch ( error ) {
+    console.error('Mysql: ', error);
+    throw error;
+  }
+
+}
 module.exports = {
   getUserByUsername,
   registerUser,
   getUserbyName,
   changePassword, 
-  newUserOrStaff
+  newUserOrStaff,
+  modifyOrDeleteUser
 }

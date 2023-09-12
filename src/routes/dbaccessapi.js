@@ -3,7 +3,7 @@ const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
 const { viewClientsData, viewStaffData, viewClientsSubs  } = require('../models/clients/clients');
 const { getClubesData } = require('../models/clubes/club');
-const { newUserOrStaff } = require('../models/users/user');
+const { newUserOrStaff, modifyOrDeleteUser } = require('../models/users/user');
 
 const router = express.Router();
 
@@ -111,5 +111,18 @@ router.post('/newUserOrStaff', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 }) 
+
+router.post('/modifyOrDeleteUser', authenticateToken, async(req, res) => {
+    const { idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption} = req.body;
+
+    try {
+        const [response] = await modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption);
+        if(response) res.status(404).send('Ocurrió un error al realizar la solicitud');
+        return res.json( response );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'ServerError', message: 'Error en el servidor'});
+    }
+})
 
 module.exports = router;
