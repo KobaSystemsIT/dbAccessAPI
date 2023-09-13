@@ -39,9 +39,7 @@ async function getUserbyName(username) {
 async function changePassword(username, password) {
   try {
     const plainPassword = password;
-    console.log(plainPassword)
     const hashedPassword = await hashPassword(plainPassword);
-    console.log(hashedPassword)
     const [rows] = await db.query('UPDATE adminUser set password = ? WHERE username = ?', [hashedPassword, username]);
     if (rows.affectedRows === 1) {
       return true;
@@ -49,7 +47,7 @@ async function changePassword(username, password) {
       return false;
     }
   } catch (error) {
-    console.log('Mysql: ', error);
+    console.error('Mysql: ', error);
     throw error;
 
   }

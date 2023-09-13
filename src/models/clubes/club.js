@@ -17,8 +17,18 @@ async function getClubesData() {
     return rows;
 }
 
+async function newClub(nameClub, addressClub){
+    try {
+        const [rows] = await db.query('CALL createClub(?, ?)', [nameClub, addressClub]);
+        return rows[0];
+    } catch ( error ) {
+        cnsole
+    }
+}
+
 module.exports = {
     getClubes,
     registerClub,
-    getClubesData
+    getClubesData, 
+    newClub
 }
