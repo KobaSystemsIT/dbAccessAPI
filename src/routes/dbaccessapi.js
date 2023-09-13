@@ -1,9 +1,9 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
-const { viewClientsData, viewStaffData, viewClientsSubs  } = require('../models/clients/clients');
-const { getClubesData, newClub } = require('../models/clubes/club');
-const { newUserOrStaff, modifyOrDeleteUser } = require('../models/users/user');
+const { viewDataClientsOrStaff } = require('../models/clients/clients');
+const { getClubesData, crudClub } = require('../models/clubes/club');
+const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem } = require('../models/users/user');
 
 const router = express.Router();
 
@@ -44,12 +44,12 @@ router.post('/addOrUpdateInventory', authenticateToken, async(req, res) => {
     }
 });
 
-//rutas para cargar datos de clientes/staff
-router.post('/viewClientsData', authenticateToken, async (req, res) => {
-    const { idClub } = req.body;
+//ruta para cargar datos de clientes/staff
+router.post('/viewDataClientsOrStaff', authenticateToken, async (req, res) => {
+    const { idClub, typeAction } = req.body;
 
     try {
-        const data = await viewClientsData(idClub);
+        const data = await viewDataClientsOrStaff(idClub, typeAction);
         if (!data) {
             return res.status(404).json({ message: 'No se encontraron datos' });
         }
@@ -60,37 +60,7 @@ router.post('/viewClientsData', authenticateToken, async (req, res) => {
     }
 });
 
-router.post('/viewClientsSubs', authenticateToken, async(req, res) => {
-    const { idClub } = req.body;
-
-    try {
-        const data = await viewClientsSubs(idClub);
-        if (!data) {
-            return res.status(404).json({ message: 'No se encontraron datos' });
-        }
-        res.json({ data });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
-    }
-});
-
-router.post('/viewStaffData', authenticateToken, async (req, res) => {
-    const { idClub } = req.body;
-
-    try {
-        const data = await viewStaffData(idClub);
-        if (!data) {
-            return res.status(404).json({ message: 'No se encontraron datos' });
-        }
-        res.json({ data });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
-    }
-});
-
-//rutas para los clubes
+//rutas para obtener los clubes y cant de usuarios activos
 router.get('/getClubesData', authenticateToken, async (req, res) => {
     try {
         const data = await getClubesData();
@@ -102,12 +72,21 @@ router.get('/getClubesData', authenticateToken, async (req, res) => {
     }
 });
 
-router.post('/newClub', authenticateToken, async(req, res) => {
-    const { nameClub, addressClub } = req.body;
+//metodo para todos los procesos de los clubes
+router.post('/crudClub', authenticateToken, async(req, res) => {
+    const { idClub, nameClub, addressClub, dataIFrame, typeAction } = req.body;
     try { 
-        const [data] = await newClub(nameClub, addressClub);
-        if(!data) return res.json({message: 'Ocurrió un error al registrar el club'});
-        return res.json( data );
+        if(typeAction != 2){
+            const [data] = await crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction);
+            if(!data) return res.json({message: 'Ocurrió un error al registrar el club'});
+            return res.json( data );
+        } else {
+            const data = await crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction);
+            if(!data) return res.json({message: 'Ocurrió un error al registrar el club'});
+            return res.json( {data} );
+        }
+        
+       
     } catch ( error ) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
@@ -131,9 +110,29 @@ router.post('/modifyOrDeleteUser', authenticateToken, async(req, res) => {
     const { idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption} = req.body;
 
     try {
-        const [response] = await modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption);
-        if(!response) res.status(404).send({message:'Ocurrió un error al realizar la solicitud'});
-        return res.json( response );
+        const [data] = await modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption);
+        if(!data) res.status(404).send({message:'Ocurrió un error al realizar la solicitud'});
+        return res.json( data );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'ServerError', message: 'Error en el servidor'});
+    }
+});
+
+//metodo para todos los procesos de usuarios del sistema
+router.post('/crudUserSystem', authenticateToken, async(req, res) => {
+    const { adminID, username,  password, idUserType, typeAction } = req.body;
+
+    try {
+        if(typeAction != 2){
+            const [data] = await crudUserSystem(adminID, username,  password, idUserType, typeAction);
+            if(!data) res.status(404).send({message:'Ocurrió un error al procesar la solicitud.'});
+            return res.json( data );
+        } else {
+            const data = await crudUserSystem(adminID, username,  password, idUserType, typeAction);
+            if(!data) res.status(404).send({message:'Ocurrió un error al obtener los datos'});
+            return res.json( { data } );
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({error: 'ServerError', message: 'Error en el servidor'});

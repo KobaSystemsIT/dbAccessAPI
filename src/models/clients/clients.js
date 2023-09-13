@@ -1,8 +1,9 @@
 const db = require('../../config/db');
 
-async function viewClientsData(idClub){
+//sp para traer los datos de Clientes, Subscripciones de clientes y Staff
+async function viewDataClientsOrStaff(idClub, typeAction){
     try{
-        const [rows] = await db.query('CALL viewClientsData(?)', [idClub]);
+        const [rows] = await db.query('CALL viewDataClientsOrStaff(?, ?)', [idClub, typeAction]);
         return rows[0];
     } catch (error){
         console.error('Mysql: ', error);
@@ -10,28 +11,6 @@ async function viewClientsData(idClub){
     }
 }
 
-async function viewStaffData(idClub){
-    try{
-        const [rows] = await db.query('CALL viewStaffData(?)', [idClub]);
-        return rows[0];
-    } catch (error){
-        console.error(error);
-        throw error;
-    }
-}
-
-async function viewClientsSubs(idClub){
-    try{
-        const [rows] = await db.query('CALL viewClientsSubs(?)', [idClub]);
-        return rows[0];
-    } catch (error){
-        console.error(error);
-        throw error;
-    }
-}
-
 module.exports = {
-    viewClientsData,
-    viewStaffData,
-    viewClientsSubs
+    viewDataClientsOrStaff
 }

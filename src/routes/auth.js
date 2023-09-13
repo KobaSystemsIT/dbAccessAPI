@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { getClubes } = require('../models/clubes/club');
 const { getPlanes } = require('../models/planes/plan');
-const { getUserByUsername, changePassword } = require('../models/users/user');
+const { login, changePassword } = require('../models/users/user');
 
 require('dotenv').config();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
   const { username, password, idClub } = req.body;
   try {
-    const [user] = await getUserByUsername(username);
+    const [user] = await login(username);
     if (!user) {
       return res.status(404).json({ error: 'UserNotFound', message: 'Usuario no encontrado' });
     }
@@ -62,8 +62,7 @@ router.put('/changePassword', async (req, res) => {
 
   try {
     const data = await changePassword(username, password);
-    console.log(data)
-    if (!data) return res.status(404).send('Ocurrió un error.');
+    if (!data) return res.status(404).send('El usuario no existe.');
     res.json({ message: 'Contraseña actualizada con éxito.'  });
   } catch (error) {
     console.error(error);

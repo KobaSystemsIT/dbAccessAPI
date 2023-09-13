@@ -1,23 +1,24 @@
 const db = require('../../config/db');
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // Número de rondas de encriptación
+const saltRounds = 10;
 
-async function getUserByUsername(username) {
+// se utiliza para iniciar sesión
+async function login(username) {
   const [rows] = await db.query('CALL getDataUserAdmin(?)', [username]);
   if (rows.length === 0) {
     return null; //
   }
   return rows[0];
 }
-
-async function registerUser(username, password, idTypeUser) {
+//metodo para registrar un nuevo usuario
+async function crudUserSystem(adminID, username,  password, idUserType, typeAction) {
   try {
     const plainPassword = password;
 
     const hashedPassword = await hashPassword(plainPassword);
 
-    const [rows] = await db.query('CALL addUser(?, ?, ?)', [username, hashedPassword, idTypeUser]);
-    return rows;
+    const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
+    return rows[0]
   } catch (error) {
     console.error('Mysql: ', error);
     throw error;
@@ -75,8 +76,8 @@ async function modifyOrDeleteUser(idUser, username, lastname, phone, email, name
 
 }
 module.exports = {
-  getUserByUsername,
-  registerUser,
+  login,
+  crudUserSystem,
   getUserbyName,
   changePassword, 
   newUserOrStaff,

@@ -6,29 +6,29 @@ async function getClubes(){
         return null;
     }
     return rows;
-}
-
-async function registerClub(){
-
-}
+};
 
 async function getClubesData() {
     const [rows] = await db.query('SELECT * FROM getClubesData');
     return rows;
-}
+};
 
-async function newClub(nameClub, addressClub){
+async function crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction){
     try {
-        const [rows] = await db.query('CALL createClub(?, ?)', [nameClub, addressClub]);
-        return rows[0];
+        const [rows] = await db.query('CALL crudClub(?, ?, ?, ?, ?)', [idClub, nameClub, addressClub, dataIFrame, typeAction]);
+        if(typeAction != 2){
+            return rows[0];
+        } else {
+            return rows;
+        }
     } catch ( error ) {
-        cnsole
+        console.error('Mysql: ', error);
+
     }
-}
+};
 
 module.exports = {
     getClubes,
-    registerClub,
     getClubesData, 
-    newClub
+    crudClub
 }
