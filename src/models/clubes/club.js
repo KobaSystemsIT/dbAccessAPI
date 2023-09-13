@@ -8,8 +8,14 @@ async function getClubes(){
     return rows;
 }
 
-async function registerClub(){
-
+async function newClub(nameClub, addressClub){
+    try {
+        const [rows] = await db.query('CALL createClub(?, ?)', [nameClub, addressClub]);
+        return rows[0];
+      } catch (error) {
+        console.error('Mysql: ', error);
+        throw error;
+      }
 }
 
 async function getClubesData() {
@@ -19,6 +25,6 @@ async function getClubesData() {
 
 module.exports = {
     getClubes,
-    registerClub,
-    getClubesData
+    getClubesData,
+    newClub
 }
