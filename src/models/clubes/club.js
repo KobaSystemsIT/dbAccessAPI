@@ -16,11 +16,7 @@ async function getClubesData() {
 async function crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction){
     try {
         const [rows] = await db.query('CALL crudClub(?, ?, ?, ?, ?)', [idClub, nameClub, addressClub, dataIFrame, typeAction]);
-        if(typeAction != 2){
-            return rows[0];
-        } else {
-            return rows;
-        }
+        return rows[0];
     } catch ( error ) {
         console.error('Mysql: ', error);
 
