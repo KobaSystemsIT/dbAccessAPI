@@ -16,12 +16,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Middleware para confiar en el encabezado X-Forwarded-Host
-app.use((req, res, next) => {
-  if (req.headers['x-forwarded-host']) {
-    req.headers.host = req.headers['x-forwarded-host'];
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   if (req.headers['x-forwarded-host']) {
+//     req.headers.host = req.headers['x-forwarded-host'];
+//   }
+//   next();
+// });
 
 app.use((req, res, next) => {
     res.header('Access-Control-Expose-Headers', 'Authorization');

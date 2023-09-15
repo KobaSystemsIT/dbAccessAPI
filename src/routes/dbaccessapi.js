@@ -1,49 +1,12 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
-const { getInventory, deleteProductInventory, addOrUpdateInventory } = require('../models/inventory/inventory');
+const { crudInventory } = require('../models/inventory/inventory');
 const { viewDataClientsOrStaff } = require('../models/clients/clients');
 const { getClubesData, crudClub } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem } = require('../models/users/user');
 const { crudProducts } = require('../models/products/products');
 
 const router = express.Router();
-
-//rutas para los inventarios
-router.post('/getInventory', authenticateToken, async (req, res) => {
-    const { idClub } = req.body;
-    try {
-        const [inventory] = await getInventory(idClub);
-        if (!inventory) return res.status(404).send({ message: 'No hay registros' });
-        res.json({ inventory });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
-    }
-});
-
-router.delete('/deleteProductInventory', authenticateToken, async (req, res) => {
-    const { inventoryID, idClub } = req.body;
-    try {
-        const deleteProd = await deleteProductInventory(inventoryID, idClub);
-        if (!deleteProd) return res.status(404).send({ message: 'Error al eliminar el producto' });
-        res.json({ message: 'Producto eliminado del inventario con éxito.' })
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
-    }
-});
-
-router.post('/addOrUpdateInventory', authenticateToken, async (req, res) => {
-    const { cantProductos, productID, idClub, fecha } = req.body;
-    try {
-        const add = await addOrUpdateInventory(cantProductos, productID, idClub, fecha);
-        if (!add) return res.status(404).send({ message: 'Error al registrar u editar los productos en el inventario' });
-        res.json({ add })
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
-    }
-});
 
 //ruta para cargar datos de clientes/staff
 router.post('/viewDataClientsOrStaff', authenticateToken, async (req, res) => {
@@ -119,7 +82,7 @@ router.post('/crudUserSystem', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 //metodo para todos los procesos de los clubes
 router.post('/crudClub', authenticateToken, async (req, res) => {
@@ -141,7 +104,7 @@ router.post('/crudClub', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 router.post('/crudProducts', authenticateToken, async (req, res) => {
     const { productID, productName, productPrice, idCategory, typeAction } = req.body;
@@ -160,6 +123,40 @@ router.post('/crudProducts', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
+
+router.post('/crudInventory', authenticateToken, async (req, res) => {
+    const { inventoryID, currentStock, productID, idClub, typeAction } = req.body;
+    const timeZone = 'America/Mexico_City';
+
+    const options = {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Formato de 24 horas
+    };
+
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
+
+    const dateReorder = formattedDate;
+    try { 
+        if(typeAction === 2){
+            const [data] = await crudInventory(inventoryID, currentStock, dateReorder, productID, idClub, typeAction);
+            if(!data) return res.json({ message: 'Ocurrió un error al obtener los datos.'});
+            return res.json( {data});
+        } else {
+            const [data] = await crudInventory(inventoryID, currentStock, dateReorder, productID, idClub, typeAction);
+            return res.json(data);
+        }
+    } catch ( error ){ 
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
 
 module.exports = router;
