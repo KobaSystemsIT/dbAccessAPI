@@ -15,11 +15,16 @@ async function getClubesData() {
 
 async function crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction){
     try {
+        if(typeAction === 2) {
         const [rows] = await db.query('CALL crudClub(?, ?, ?, ?, ?)', [idClub, nameClub, addressClub, dataIFrame, typeAction]);
-        return rows[0];
+        return rows;
+        } else {
+            const [rows] = await db.query('CALL crudClub(?, ?, ?, ?, ?)', [idClub, nameClub, addressClub, dataIFrame, typeAction]);
+            return rows[0];
+        }
     } catch ( error ) {
         console.error('Mysql: ', error);
-
+        throw error;
     }
 };
 

@@ -17,8 +17,13 @@ async function crudUserSystem(adminID, username,  password, idUserType, typeActi
 
     const hashedPassword = await hashPassword(plainPassword);
 
-    const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
-    return rows[0]
+    if(typeAction === 2){
+      const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
+      return rows;
+    } else {
+      const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
+      return rows[0];
+    }
   } catch (error) {
     console.error('Mysql: ', error);
     throw error;
