@@ -3,7 +3,7 @@ const authenticateToken = require('../middleware/authMiddleware');
 const { crudInventory } = require('../models/inventory/inventory');
 const { viewDataClientsOrStaff } = require('../models/clients/clients');
 const { getClubesData, crudClub } = require('../models/clubes/club');
-const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem } = require('../models/users/user');
+const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser } = require('../models/users/user');
 const { crudProducts } = require('../models/products/products');
 
 const router = express.Router();
@@ -154,6 +154,21 @@ router.post('/crudInventory', authenticateToken, async (req, res) => {
             return res.json(data);
         }
     } catch ( error ){ 
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
+
+router.post('/getDataUser', authenticateToken, async (req, res) => {
+    const {idUser} = req.body;
+
+    try {
+        console.log(idUser);
+        const [data] = await getDataUser(idUser);
+        console.log(data);
+        if(!data) return res.json({ message: 'Ocurrió un error al obtener los datos.'});
+        return res.json({data});
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }

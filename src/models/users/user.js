@@ -80,11 +80,17 @@ async function modifyOrDeleteUser(idUser, username, lastname, phone, email, name
   }
 
 }
+
+async function getDataUser(idUser) {
+  const [rows] = await db.query('SELECT username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact FROM users where idUser = ?', [idUser]);
+  return rows;
+}
 module.exports = {
   login,
   crudUserSystem,
   getUserbyName,
   changePassword, 
   newUserOrStaff,
-  modifyOrDeleteUser
+  modifyOrDeleteUser,
+  getDataUser,
 }
