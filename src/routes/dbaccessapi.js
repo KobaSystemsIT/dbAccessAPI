@@ -5,6 +5,7 @@ const { viewDataClientsOrStaff } = require('../models/clients/clients');
 const { getClubesData, crudClub } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser } = require('../models/users/user');
 const { crudProducts, crudCategoriesProducts } = require('../models/products/products');
+const { crudSubscription } = require('../models/subscription/subscription');
 
 const router = express.Router();
 
@@ -51,12 +52,12 @@ router.post('/newUserOrStaff', authenticateToken, async (req, res) => {
 })
 
 router.post('/modifyOrDeleteUser', authenticateToken, async (req, res) => {
-    const { idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption } = req.body;
+    const { idUser, username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact, valueOption } = req.body;
 
     try {
-        const [data] = await modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption);
-        if (!data) res.status(404).send({ message: 'Ocurrió un error al realizar la solicitud' });
-        return res.json(data);
+        const [response] = await modifyOrDeleteUser(idUser, username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact, valueOption);
+        if (!response) res.status(404).send({ message: 'Ocurrió un error al realizar la solicitud' });
+        return res.json(response);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
@@ -113,7 +114,7 @@ router.post('/crudProducts', authenticateToken, async (req, res) => {
         if (typeAction === 2) {
             const [data] = await crudProducts(productID, productName, productPrice, idCategory, typeAction);
             if (!data) return res.json({ message: 'Ocurrió un error al procesar la solicitud' });
-            return res.json( {data});
+            return res.json({data});
         } else {
             const [data] = await crudProducts(productID, productName, productPrice, idCategory, typeAction);
             if (!data) return res.json({ message: 'Ocurrió un error al procesar la solicitud' });
@@ -160,13 +161,12 @@ router.post('/crudInventory', authenticateToken, async (req, res) => {
 });
 
 router.post('/getDataUser', authenticateToken, async (req, res) => {
-    const {idUser} = req.body;
+    const { idUser } = req.body;
 
     try {
-        const [data] = await getDataUser(idUser);
-        console.log(data);
-        if(!data) return res.json({ message: 'Ocurrió un error al obtener los datos.'});
-        return res.json({data});
+        const [userData] = await getDataUser(idUser);
+        if(!userData) return res.json({ message: 'Ocurrió un error al obtener los datos.'});
+        return res.json( {userData});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
@@ -180,6 +180,23 @@ router.post('/crudCategoriesProducts', authenticateToken, async (req, res) => {
         const [data] = await crudCategoriesProducts(categoryId, nameCateg, typeAction);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud'});
         if(typeAction === 2) {
+            return res.json({data});
+        } else {
+            return res.json(data);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
+
+router.post('/crudSubscription', authenticateToken, async (req, res) => {
+    const { idSub, nameSubscription, daysSubscription, priceSubscription, typeAction } = req.body; 
+
+    try {   
+        const [data] = await crudSubscription(idSub, nameSubscription, daysSubscription, priceSubscription, typeAction);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        if(typeAction === 2){
             return res.json({data});
         } else {
             return res.json(data);

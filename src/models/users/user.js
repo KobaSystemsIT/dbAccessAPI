@@ -70,9 +70,9 @@ async function newUserOrStaff(username, lastname, phone, email, nameEmergency, p
 
 }
 
-async function modifyOrDeleteUser(idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption){
+async function modifyOrDeleteUser(idUser, username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact, valueOption){
   try {
-    const [rows] = await db.query('CALL modifyOrDeleteUser(?, ?, ?, ?, ?, ?, ?, ?)', [idUser, username, lastname, phone, email, nameContact, phoneContact, valueOption]);
+    const [rows] = await db.query('CALL modifyOrDeleteUser(?, ?, ?, ?, ?, ?, ?, ?)', [idUser, username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact, valueOption]);
     return rows[0];
   } catch ( error ) {
     console.error('Mysql: ', error);
@@ -82,7 +82,10 @@ async function modifyOrDeleteUser(idUser, username, lastname, phone, email, name
 }
 
 async function getDataUser(idUser) {
-  const [rows] = await db.query('SELECT username, lastName, phoneNumber, email, nameEmergencyContact, emergencyContact FROM users where idUser = ?', [idUser]);
+  const [rows] = await db.query('SELECT username, lastName,  phoneNumber, email, nameEmergencyContact, emergencyContact, CASE WHEN nameSubscriptionType IS NULL THEN " " ' + 
+  'ELSE nameSubscriptionType END as nameSubscriptionType, CASE WHEN isActive IS NULL THEN "Sin membresía registrada" WHEN isActive = 0 THEN "Sin membresía activa" ' +
+  'WHEN isActive = 1 THEN "Membresía Activa" END as isActive FROM users U LEFT JOIN subscriptions S ON U.idUser = S.idUser LEFT JOIN subscriptionType ST ON S.idSubscriptionType = ST.idSubscriptionType ' +
+  'WHERE U.idUser = ?', [idUser]);
   return rows;
 }
 module.exports = {
