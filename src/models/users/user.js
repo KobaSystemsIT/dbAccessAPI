@@ -38,7 +38,7 @@ async function hashPassword(password) {
 
 async function getUserbyName(username) {
   const name = `%${username}%`;
-  const [rows] = await db.query('SELECT idUser, username FROM users WHERE username LIKE ?', [name]);
+  const [rows] = await db.query('SELECT idUser, CONCAT(username, " ", lastName) as NombreUsuario FROM users WHERE username LIKE ?', [name]);
   return rows;
 }
 
