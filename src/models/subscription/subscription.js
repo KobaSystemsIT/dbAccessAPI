@@ -15,6 +15,17 @@ async function crudSubscription(idSub, nameSubscription, daysSubscription, price
 
 }
 
+async function newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate){
+    try{
+        const [rows] = await db.query('CALL newOrUpdateSubscription(?, ?, ?, ?, ?)', [idUser, idSubscriptionType, idClub, startDate, endDate]);
+        return rows[0];
+    } catch (error) {
+        console.error('Mysql: ', error);
+        throw error;
+    }
+}
+
 module.exports = {
-    crudSubscription
+    crudSubscription,
+    newOrUpdateSubscription
 }

@@ -5,7 +5,7 @@ const { viewDataClientsOrStaff } = require('../models/clients/clients');
 const { getClubesData, crudClub } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser } = require('../models/users/user');
 const { crudProducts, crudCategoriesProducts } = require('../models/products/products');
-const { crudSubscription } = require('../models/subscription/subscription');
+const { crudSubscription, newOrUpdateSubscription } = require('../models/subscription/subscription');
 
 const router = express.Router();
 
@@ -201,6 +201,19 @@ router.post('/crudSubscription', authenticateToken, async (req, res) => {
         } else {
             return res.json(data);
         }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
+
+router.post('/newOrUpdateSubscription', authenticateToken, async (req, res) => {
+    const { idUser, idSubscriptionType, idClub, startDate, endDate } = req.body;
+
+    try {
+        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        return res.json(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
