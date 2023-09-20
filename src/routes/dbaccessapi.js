@@ -174,10 +174,10 @@ router.post('/getDataUser', authenticateToken, async (req, res) => {
 });
 
 router.post('/crudCategoriesProducts', authenticateToken, async (req, res) => {
-    const { categoryId, nameCateg, typeAction } = req.body;
+    const { productCategoryID, nameCategory, typeAction } = req.body;
 
     try {
-        const [data] = await crudCategoriesProducts(categoryId, nameCateg, typeAction);
+        const [data] = await crudCategoriesProducts(productCategoryID, nameCategory, typeAction);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud'});
         if(typeAction === 2) {
             return res.json({data});
@@ -188,7 +188,7 @@ router.post('/crudCategoriesProducts', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 
 
