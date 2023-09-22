@@ -11,6 +11,17 @@ async function viewDataClientsOrStaff(idClub, typeAction){
     }
 }
 
+async function InsertarDatosEnTablaTemporal(idClub){
+    try {
+        const [rows] = await db.query('CALL InsertarDatosEnTablaTemporal(?)', [idClub]);
+        return rows;
+    } catch (error) {
+        console.error('Mysql: ', error);
+        throw error;
+    }
+}
+
 module.exports = {
-    viewDataClientsOrStaff
+    viewDataClientsOrStaff,
+    InsertarDatosEnTablaTemporal
 }
