@@ -81,8 +81,7 @@ async function modifyOrDeleteUser(idUser, username, lastName, phoneNumber, email
 
 }
 
-async function 
-getDataUser(idUser) {
+async function getDataUser(idUser) {
   const [rows] = await db.query('SELECT username, lastName,  phoneNumber, email, nameEmergencyContact, emergencyContact, CASE WHEN nameSubscriptionType IS NULL THEN " " ' + 
   'ELSE nameSubscriptionType END as nameSubscriptionType, CASE WHEN isActive IS NULL THEN "Sin membresía registrada" WHEN isActive = 0 THEN "Sin membresía activa" ' +
   'WHEN isActive = 1 THEN "Membresía Activa" END as isActive, idUserType FROM users U LEFT JOIN subscriptions S ON U.idUser = S.idUser LEFT JOIN subscriptionType ST ON S.idSubscriptionType = ST.idSubscriptionType ' +
