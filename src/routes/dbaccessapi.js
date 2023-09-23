@@ -2,7 +2,7 @@ const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const { crudInventory } = require('../models/inventory/inventory');
 const { viewDataClientsOrStaff, InsertarDatosEnTablaTemporal } = require('../models/clients/clients');
-const { getClubesData, crudClub } = require('../models/clubes/club');
+const { getClubesData, crudClub, getClubDatabyId } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser } = require('../models/users/user');
 const { crudProducts, crudCategoriesProducts } = require('../models/products/products');
 const { crudSubscription, newOrUpdateSubscription } = require('../models/subscription/subscription');
@@ -36,6 +36,17 @@ router.get('/getClubesData', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
+
+router.post('/getClubDatabyId', authenticateToken, async (req, res) => {
+    const { idClub } = req.body;
+    try {
+        const data = await getClubDatabyId(idClub);
+        if (!data) return res.json({ message: 'No se encontraron datos.' });
+        return res.json({data});
+    } catch (error) {
+        console.error(error);
+    }
+})
 
 //rutas para gestion de usuarios
 router.post('/newUserOrStaff', authenticateToken, async (req, res) => {

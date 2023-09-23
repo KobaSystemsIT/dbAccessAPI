@@ -28,8 +28,14 @@ async function crudClub(idClub, nameClub, addressClub, dataIFrame, typeAction){
     }
 };
 
+async function getClubDatabyId(idClub){
+    const [rows] = await db.query('SELECT * FROM clubes WHERE idClub = ?', [idClub]);
+    return rows[0];
+}
+
 module.exports = {
     getClubes,
     getClubesData, 
-    crudClub
+    crudClub,
+    getClubDatabyId
 }
