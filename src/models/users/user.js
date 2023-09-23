@@ -88,6 +88,20 @@ async function getDataUser(idUser) {
   'WHERE U.idUser = ?', [idUser]);
   return rows;
 }
+
+async function crudUserVisitors(id, username, idClub, phone, entrada, salida, typeAction){
+  try {
+    const [rows] = await db.query('CALL crudUserVisitor(?, ?, ?, ?, ?, ?, ?)', [id, username, idClub, phone, entrada, salida, typeAction]);
+    if(typeAction === 2){
+      return rows;
+    } else {
+      return rows[0];
+    }
+  } catch (error) {
+    console.error('Mysql: ', error);
+    throw error;
+  }
+}
 module.exports = {
   login,
   crudUserSystem,
@@ -96,4 +110,5 @@ module.exports = {
   newUserOrStaff,
   modifyOrDeleteUser,
   getDataUser,
+  crudUserVisitors
 }
