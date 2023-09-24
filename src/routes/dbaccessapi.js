@@ -122,7 +122,7 @@ router.post('/crudProducts', authenticateToken, async (req, res) => {
     const { productID, productName, productPrice, idCategory, typeAction } = req.body;
 
     try {
-        if (typeAction === 2) {
+        if (typeAction === 2 || typeAction === 5) {
             const [data] = await crudProducts(productID, productName, productPrice, idCategory, typeAction);
             if (!data) return res.json({ message: 'Ocurrió un error al procesar la solicitud' });
             return res.json({data});
