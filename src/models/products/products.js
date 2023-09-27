@@ -30,8 +30,20 @@ async function crudCategoriesProducts(productCategoryID, nameCategory, typeActio
     }
 }
 
+
+async function pointOfSale(cantProducts, totalVenta, productID, fechaVenta, idClub){
+    try {
+        const [rows] = await db.query('CALL pointOfSale(?, ?, ?, ?, ?)', [cantProducts, totalVenta, productID, fechaVenta, idClub]);
+        return rows[0];
+    } catch (error){
+        console.error('Mysql: ', error);
+        throw error;
+    }
+}
+
 module.exports = {
     crudProducts, 
-    crudCategoriesProducts
+    crudCategoriesProducts,
+    pointOfSale
     
 }

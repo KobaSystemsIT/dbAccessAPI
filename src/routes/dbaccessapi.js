@@ -4,7 +4,7 @@ const { crudInventory } = require('../models/inventory/inventory');
 const { viewDataClientsOrStaff, InsertarDatosEnTablaTemporal } = require('../models/clients/clients');
 const { getClubesData, crudClub, getClubDatabyId } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser, crudUserVisitors } = require('../models/users/user');
-const { crudProducts, crudCategoriesProducts } = require('../models/products/products');
+const { crudProducts, crudCategoriesProducts, pointOfSale } = require('../models/products/products');
 const { crudSubscription, newOrUpdateSubscription } = require('../models/subscription/subscription');
 
 const router = express.Router();
@@ -265,11 +265,42 @@ router.post('/crudUserVisitor', authenticateToken, async (req, res) => {
     const horaIngresoSalida = formattedDate;
     try{
         const [data] = await crudUserVisitors(id, username, idClub, phone, horaIngresoSalida, horaIngresoSalida, typeAction);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
         if(typeAction === 2) {
             return res.json({data})
         } else {
             return res.json(data);
         }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
+
+router.post('/pointOfSale', authenticateToken, async (req, res) => {
+    const { cantProducts, totalVenta, productID, idClub } = req.body;
+    const timeZone = 'America/Mexico_City';
+
+    const options = {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Formato de 24 horas
+    };
+
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
+
+    const horaVenta = formattedDate;
+
+    try {
+        const [data] = await pointOfSale( cantProducts, totalVenta, productID, horaVenta, idClub );
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        return res.json(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
