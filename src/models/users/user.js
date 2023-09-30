@@ -11,17 +11,16 @@ async function login(username) {
   return rows[0];
 }
 //metodo para registrar un nuevo usuario
-async function crudUserSystem(adminID, username,  password, idUserType, typeAction) {
+async function crudUserSystem(adminID, username,  password, idUserType, idClub, typeAction) {
   try {
     const plainPassword = password;
 
     const hashedPassword = await hashPassword(plainPassword);
 
+    const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, idClub, typeAction]);
     if(typeAction === 2){
-      const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
       return rows;
     } else {
-      const [rows] = await db.query('CALL crudUserSystem(?, ?, ?, ?, ?)', [adminID, username, hashedPassword, idUserType, typeAction]);
       return rows[0];
     }
   } catch (error) {

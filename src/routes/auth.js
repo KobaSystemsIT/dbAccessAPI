@@ -21,14 +21,20 @@ router.post('/login', async (req, res) => {
     if (!validPassword) {
       return res.status(401).json({ error: 'InvalidPassword', message: 'Contraseña incorrecta' });
     }
+
     const tokenExpiration = Math.floor(Date.now() / 1000) + 3600;
     const secretKey = process.env.JWT_SECRET;
-    const token = jwt.sign({ id: user.adminID, userType: user.rol, idClub: idClub, exp: tokenExpiration}, secretKey);
-    
+    const token = jwt.sign({ id: user.adminID, userType: user.rol, idClub: user.idClub, exp: tokenExpiration}, secretKey);
+
     res.setHeader('Authorization', token);
     res.setHeader('X-Token-Expiration', tokenExpiration.toString());
 
-    res.json({ idUser: user.adminID, username: user.username, rol: user.rol, idClub: idClub});
+    if((user.rol === 'Staff' && idClub === user.idClub) || (user.rol === 'Administrador')){
+      res.json({ idUser: user.adminID, username: user.username, rol: user.rol, idClub: user.idClub});
+    } else {
+        return res.status(401).json({ error: 'CantAccess', message: 'El usuario no cuenta con acceso a esta sucursal.' });
+    }
+   
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });

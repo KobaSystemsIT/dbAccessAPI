@@ -89,18 +89,16 @@ router.post('/modifyOrDeleteUser', authenticateToken, async (req, res) => {
 
 //metodo para todos los procesos de usuarios del sistema
 router.post('/crudUserSystem', authenticateToken, async (req, res) => {
-    const { adminID, username, password, idUserType, typeAction } = req.body;
+    const { adminID, username, password, idUserType, idClub, typeAction } = req.body;
 
     try {
+        const [data] = await crudUserSystem(adminID, username, password, idUserType, idClub, typeAction);
+        if (!data) res.status(404).send({ message: 'Ocurrió un error al obtener los datos' });
+        
         if (typeAction === 2) {
-            const [data] = await crudUserSystem(adminID, username, password, idUserType, typeAction);
-            if (!data) res.status(404).send({ message: 'Ocurrió un error al obtener los datos' });
             return res.json({ data });
         } else {
-            const [data] = await crudUserSystem(adminID, username, password, idUserType, typeAction);
-            if (!data) res.status(404).send({ message: 'Ocurrió un error al procesar la solicitud.' });
-            return res.json(data);
-            
+            return res.json(data);   
         }
     } catch (error) {
         console.error(error);
@@ -231,10 +229,10 @@ router.post('/crudSubscription', authenticateToken, async (req, res) => {
 });
 
 router.post('/newOrUpdateSubscription', authenticateToken, async (req, res) => {
-    const { idUser, idSubscriptionType, idClub, startDate, endDate } = req.body;
+    const { idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption } = req.body;
 
     try {
-        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate);
+        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
         return res.json(data);
     } catch (error) {
