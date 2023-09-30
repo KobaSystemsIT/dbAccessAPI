@@ -29,7 +29,7 @@ router.post('/viewDataClientsOrStaff', authenticateToken, async (req, res) => {
 //rutas para obtener los clubes y cant de usuarios activos
 router.get('/getClubesData', authenticateToken, async (req, res) => {
     try {
-        const [data] = await getClubesData();
+        const data = await getClubesData();
         if (!data) return res.json({ message: 'No se encontraron datos.' });
         return res.json({ data });
     } catch (error) {
@@ -229,10 +229,10 @@ router.post('/crudSubscription', authenticateToken, async (req, res) => {
 });
 
 router.post('/newOrUpdateSubscription', authenticateToken, async (req, res) => {
-    const { idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption } = req.body;
+    const { idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios } = req.body;
 
     try {
-        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption);
+        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
         return res.json(data);
     } catch (error) {
