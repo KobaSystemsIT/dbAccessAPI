@@ -6,6 +6,7 @@ const { getClubesData, crudClub, getClubDatabyId } = require('../models/clubes/c
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser, crudUserVisitors } = require('../models/users/user');
 const { crudProducts, crudCategoriesProducts, pointOfSale } = require('../models/products/products');
 const { crudSubscription, newOrUpdateSubscription } = require('../models/subscription/subscription');
+const { getPaymentOptions } = require('../models/paymentOptions/paymentOptions');
 
 const router = express.Router();
 
@@ -28,14 +29,25 @@ router.post('/viewDataClientsOrStaff', authenticateToken, async (req, res) => {
 //rutas para obtener los clubes y cant de usuarios activos
 router.get('/getClubesData', authenticateToken, async (req, res) => {
     try {
-        const data = await getClubesData();
-        if (!data) return res.json({ message: 'No se encontraron datos.' })
+        const [data] = await getClubesData();
+        if (!data) return res.json({ message: 'No se encontraron datos.' });
         return res.json({ data });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
+
+router.get('/getPaymentOptions', authenticateToken, async (req, res) => {
+    try {
+        const data = await getPaymentOptions();
+        if(!data) return res.json({ message: 'No se encontraron datos.' });
+        return res.json({data});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
 
 router.post('/getClubDatabyId', authenticateToken, async (req, res) => {
     const { idClub } = req.body;
@@ -305,7 +317,8 @@ router.post('/pointOfSale', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
+
 
 
 
