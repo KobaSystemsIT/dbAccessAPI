@@ -23,9 +23,20 @@ async function newOrUpdateSubscription(idUser, idSubscriptionType, idClub, start
         console.error('Mysql: ', error);
         throw error;
     }
+};
+
+async function payPendingPayments(idUser, payment, comments, idPaymentOption){
+    try {   
+        const [rows] = await db.query('CALL payPendingPayments', [idUser, payment, comments, idPaymentOption])
+        return rows[0];
+    } catch (error) {
+        console.error('Mysql: ', error);
+        throw error;
+    }
 }
 
 module.exports = {
     crudSubscription,
-    newOrUpdateSubscription
+    newOrUpdateSubscription,
+    payPendingPayments
 }

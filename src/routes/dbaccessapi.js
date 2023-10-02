@@ -5,8 +5,9 @@ const { viewDataClientsOrStaff, InsertarDatosEnTablaTemporal } = require('../mod
 const { getClubesData, crudClub, getClubDatabyId } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser, crudUserVisitors } = require('../models/users/user');
 const { crudProducts, crudCategoriesProducts, pointOfSale } = require('../models/products/products');
-const { crudSubscription, newOrUpdateSubscription } = require('../models/subscription/subscription');
+const { crudSubscription, newOrUpdateSubscription, payPendingPayments } = require('../models/subscription/subscription');
 const { getPaymentOptions } = require('../models/paymentOptions/paymentOptions');
+const { crudSuppliers } = require('../models/suppliers/suppliers');
 
 const router = express.Router();
 
@@ -288,7 +289,7 @@ router.post('/crudUserVisitor', authenticateToken, async (req, res) => {
 });
 
 router.post('/pointOfSale', authenticateToken, async (req, res) => {
-    const { cantProducts, totalVenta, productID, idClub } = req.body;
+    const { cantProducts, totalVenta, productID, idClub, typeAction, idPaymentOption } = req.body;
     const timeZone = 'America/Mexico_City';
 
     const options = {
@@ -308,14 +309,48 @@ router.post('/pointOfSale', authenticateToken, async (req, res) => {
     const horaVenta = formattedDate;
 
     try {
-        const [data] = await pointOfSale( cantProducts, totalVenta, productID, horaVenta, idClub );
+        const [data] = await pointOfSale( cantProducts, totalVenta, productID, horaVenta, idClub, typeAction, idPaymentOption );
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
-        return res.json(data);
+        if(typeAction != 1){
+            return res.json({data})
+        } else {
+            return res.json(data)
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
+
+router.post('/payPendingPayments', authenticateToken, async (req, res) => {
+    const { idUser, payment, comments, idPaymentOption } = req.body;
+
+    try {
+        const [data] = await payPendingPayments(idUser, payment, comments, idPaymentOption);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        return res.json(data);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
+
+router.post('/crudSuppliers', authenticateToken, async (req, res) => {
+    const { idSupplier, nameSupplier, typeAction } = req.body;
+
+    try {
+        const [data] = await crudSuppliers(idSupplier, nameSupplier, typeAction);
+        if(typeAction === 2) {
+            return res.json({data})
+        } else {
+            return res.json(data);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
 
 
 
