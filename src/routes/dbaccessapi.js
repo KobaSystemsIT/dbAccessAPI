@@ -230,10 +230,10 @@ router.post('/crudSubscription', authenticateToken, async (req, res) => {
 });
 
 router.post('/newOrUpdateSubscription', authenticateToken, async (req, res) => {
-    const { idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios } = req.body;
+    const { idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios, fechaVenta } = req.body;
 
     try {
-        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios);
+        const [data] = await newOrUpdateSubscription(idUser, idSubscriptionType, idClub, startDate, endDate, idPaymentOption, price, comentarios, fechaVenta);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
         return res.json(data);
     } catch (error) {
