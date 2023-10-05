@@ -334,7 +334,7 @@ router.post('/payPendingPayments', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
 
 router.post('/crudSuppliers', authenticateToken, async (req, res) => {
     const { idSupplier, nameSupplier, typeAction } = req.body;
@@ -350,7 +350,41 @@ router.post('/crudSuppliers', authenticateToken, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
-})
+});
+
+router.post('/paySuppliers', authenticateToken, async (req, res) => {
+    const { payment, conceptPayment, idSupplier, idClub, adminID, idPaymentOption, typeAction } = req.body;
+    const timeZone = 'America/Mexico_City';
+
+    const options = {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Formato de 24 horas
+    };
+
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
+
+    const horaPago = formattedDate;
+
+    try {
+        const [data] = await pointOfSale(payment, conceptPayment, idSupplier, idClub, adminID, horaPago, idPaymentOption, typeAction);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        if(typeAction ==  2){
+            return res.json({data})
+        } else {
+            return res.json(data)
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+});
 
 
 

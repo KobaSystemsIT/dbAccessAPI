@@ -12,8 +12,18 @@ async function crudSuppliers(idSupplier, nameSupplier, typeAction){
         console.error('Mysql: ', error);
         throw error;
     }
+};
+
+async function paySuppliers(payment, conceptPayment, idSupplier, idClub, adminID, horaPago, idPaymentOption){
+    try {
+        const [rows] = await db.query('CALL paySuppliers (?, ?, ?, ?, ?)', [payment, conceptPayment, idSupplier, idClub, adminID, horaPago, idPaymentOption])
+    } catch (error) {
+        console.error('Mysql:', error);
+        throw error;
+    }
 }
 
 module.exports = {
-    crudSuppliers
+    crudSuppliers,
+    paySuppliers
 }
