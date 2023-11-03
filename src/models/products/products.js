@@ -43,9 +43,24 @@ async function pointOfSale(cantProducts, totalVenta, productID, fechaVenta, idCl
     }
 }
 
+async function openOrCloseCashRegister(idCaja, monto, idClub, adminID, fechaHora, typeAction){
+    try {
+        const [rows] = await db.query('CALL openOrCloseCashRegister(?, ?, ?, ?, ?, ?)', [idCaja, monto, idClub, adminID, fechaHora, typeAction]);
+        if(typeAction != 1){
+            return rows;
+        } else {
+            return rows[0];
+        }
+    } catch (error){
+        console.error('Mysql: ', error);
+        throw error;
+    }
+}
+
 module.exports = {
     crudProducts, 
     crudCategoriesProducts,
-    pointOfSale
+    pointOfSale,
+    openOrCloseCashRegister
     
 }

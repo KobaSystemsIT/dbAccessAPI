@@ -4,7 +4,7 @@ const { crudInventory } = require('../models/inventory/inventory');
 const { viewDataClientsOrStaff, InsertarDatosEnTablaTemporal } = require('../models/clients/clients');
 const { getClubesData, crudClub, getClubDatabyId } = require('../models/clubes/club');
 const { newUserOrStaff, modifyOrDeleteUser, crudUserSystem, getDataUser, crudUserVisitors } = require('../models/users/user');
-const { crudProducts, crudCategoriesProducts, pointOfSale } = require('../models/products/products');
+const { crudProducts, crudCategoriesProducts, pointOfSale, openOrCloseCashRegister } = require('../models/products/products');
 const { crudSubscription, newOrUpdateSubscription, payPendingPayments } = require('../models/subscription/subscription');
 const { getPaymentOptions } = require('../models/paymentOptions/paymentOptions');
 const { crudSuppliers, paySuppliers } = require('../models/suppliers/suppliers');
@@ -95,11 +95,11 @@ router.post('/crudUserSystem', authenticateToken, async (req, res) => {
     try {
         const [data] = await crudUserSystem(adminID, username, password, idUserType, idClub, typeAction);
         if (!data) res.status(404).send({ message: 'Ocurrió un error al obtener los datos' });
-        
+
         if (typeAction === 2) {
             return res.json({ data });
         } else {
-            return res.json(data);   
+            return res.json(data);
         }
     } catch (error) {
         console.error(error);
@@ -167,7 +167,7 @@ router.post('/crudInventory', authenticateToken, async (req, res) => {
     const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
 
     const dateReorder = formattedDate;
-    try { 
+    try {
         if(typeAction === 2){
             const [data] = await crudInventory(inventoryID, currentStock, dateReorder, productID, idClub, typeAction);
             if(!data) return res.json({ message: 'Ocurrió un error al obtener los datos.'});
@@ -176,7 +176,7 @@ router.post('/crudInventory', authenticateToken, async (req, res) => {
             const [data] = await crudInventory(inventoryID, currentStock, dateReorder, productID, idClub, typeAction);
             return res.json(data);
         }
-    } catch ( error ){ 
+    } catch ( error ){
         console.error(error);
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
@@ -213,9 +213,9 @@ router.post('/crudCategoriesProducts', authenticateToken, async (req, res) => {
 })
 
 router.post('/crudSubscription', authenticateToken, async (req, res) => {
-    const { idSub, nameSubscription, daysSubscription, priceSubscription, typeAction } = req.body; 
+    const { idSub, nameSubscription, daysSubscription, priceSubscription, typeAction } = req.body;
 
-    try {   
+    try {
         const [data] = await crudSubscription(idSub, nameSubscription, daysSubscription, priceSubscription, typeAction);
         if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
         if(typeAction === 2){
@@ -368,5 +368,36 @@ router.post('/paySuppliers', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
     }
 });
+
+router.post('/openOrCloseCashRegister', authenticateToken, async (req, res) => {
+    const { idCaja, monto, idClub, adminID, typeAction } = req.body;
+
+    const timeZone = 'America/Mexico_City';
+
+    const options = {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Formato de 24 horas
+    };
+
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.toLocaleString('en-US', options));
+
+    const fechaHora = formattedDate;
+
+    try {
+        const [data] = await openOrCloseCashRegister(idCaja, monto, idClub, adminID, fechaHora, typeAction);
+        if(!data) return res.json({message: 'Ocurrió un error al procesar la solicitud.'});
+        return res.json({data})
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ error: 'ServerError', message: 'Error en el servidor' });
+    }
+})
 
 module.exports = router;
